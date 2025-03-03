@@ -1,50 +1,60 @@
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-#include <cstring>
-#include <cstdlib>
-#include <string>
+//stole all this from gpt, as a test good enuf
+#include <iostream>
+#include <fstream>
+#include <sys/mman.h>   // mmap, shm_open
+#include <fcntl.h>      // O_* constants
+#include <unistd.h>     // ftruncate, close
+#include <cstring>      // memcpy
+#include <sys/stat.h>   // stat
 
-int main(int argc, char *argv[])
-{
-   using namespace boost::interprocess;
+const char* SHM_NAME = "/my_shared_memory";
 
-   if(argc == 1){  //Parent process
-      //Remove shared memory on construction and destruction
-      struct shm_remove
-      {
-         shm_remove() { shared_memory_object::remove("MySharedMemory"); }
-         ~shm_remove(){ shared_memory_object::remove("MySharedMemory"); }
-      } remover;
+int main() {
+    // Open PNG file in binary mode
+    std::ifstream file("testimage.png", std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cerr << "Failed to open image.png\n";
+        return 1;
+    }
 
-      //Create a shared memory object.
-      shared_memory_object shm (create_only, "MySharedMemory", read_write);
+    // Get file size
+    size_t filesize = file.tellg();
+    file.seekg(0, std::ios::beg);
 
-      //Set size
-      shm.truncate(1000);
+    // Create shared memory
+    int shm_fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (shm_fd == -1) {
+        perror("shm_open");
+        return 1;
+    }
 
-      //Map the whole shared memory in this process
-      mapped_region region(shm, read_write);
+    // Resize shared memory to fit the image
+    if (ftruncate(shm_fd, filesize) == -1) {
+        perror("ftruncate");
+        return 1;
+    }
 
-      //Write all the memory to 1
-      std::memset(region.get_address(), 1, region.get_size());
+    // Map shared memory
+    void* ptr = mmap(0, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (ptr == MAP_FAILED) {
+        perror("mmap");
+        return 1;
+    }
 
-      //Launch child process
-      std::string s(argv[0]); s += " child ";
-      if(0 != std::system(s.c_str()))
-         return 1;
-   }
-   else{
-      //Open already created shared memory object.
-      shared_memory_object shm (open_only, "MySharedMemory", read_only);
+    // Read file into memory and copy to shared memory
+    file.read(static_cast<char*>(ptr), filesize);
+    file.close();
 
-      //Map the whole shared memory in this process
-      mapped_region region(shm, read_only);
+    std::cout << "PNG file loaded into shared memory (" << filesize << " bytes)\n";
 
-      //Check that memory was initialized to 1
-      char *mem = static_cast<char*>(region.get_address());
-      for(std::size_t i = 0; i < region.get_size(); ++i)
-         if(*mem++ != 1)
-            return 1;   //Error checking memory
-   }
-   return 0;
+    // Keep the process alive for testing
+    std::cout << "Press ENTER to exit...\n";
+    std::cin.get();
+
+    // Cleanup
+    munmap(ptr, filesize);
+    close(shm_fd);
+    shm_unlink(SHM_NAME); // Remove shared memory when done
+
+    return 0;
 }
