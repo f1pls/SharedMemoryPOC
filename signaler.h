@@ -20,7 +20,6 @@ struct SharedData {
 };
 void signal_next(SharedData* shared)
 {
-    std::cout<<"THIS IS  WLOCK: " <<shared->wlock << std::endl;
     if (shared->wlock > 0)
     {
         // If any writes are waiting, wake one up
