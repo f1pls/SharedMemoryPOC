@@ -15,6 +15,8 @@ struct SharedData{
     pthread_mutex_t lock;
     pthread_mutexattr_t attrmutex;
     long fileSize;
+    bool writewait;
+    bool readwait;
     int wlock;
     int num_of_reads;
     char value[];
@@ -23,15 +25,10 @@ void signal_next(SharedData* mem)
 {
     if (mem->wlock > 0)
     {
-        // std::cout << "IF: " << &mem << std::endl; 
-        // If any writes are waiting, wake one up
         pthread_cond_broadcast(&mem->writer_cv);
     }
     else
     {
-        // std::cout << "ELSE: " << &mem << std::endl; 
-        // If there are no writes pending, wake up all the
-        // readers (there may not be any but that's fine)
         pthread_cond_broadcast(&mem->reader_cv);
     }
 }

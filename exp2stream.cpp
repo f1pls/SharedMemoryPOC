@@ -44,13 +44,11 @@ int main()
     SharedData *mutex = new (lock) SharedData;
     pthread_mutexattr_init(&mutex->attrmutex);
     pthread_mutexattr_setpshared(&mutex->attrmutex, PTHREAD_PROCESS_SHARED);
-    std:: cout<<" MB"<<std::endl;
     pthread_mutex_init(&mutex->lock, &mutex->attrmutex);
     pthread_condattr_t attrcond;
     pthread_condattr_init(&attrcond);
     pthread_condattr_setpshared(&attrcond, PTHREAD_PROCESS_SHARED);
     pthread_cond_init(&mutex->writer_cv, &attrcond);
-    std:: cout<<" MB"<<std::endl;
     pthread_cond_init(&mutex->reader_cv, &attrcond);
     mutex->fileSize=fileSize;
     std::chrono::seconds fps{0};
@@ -58,31 +56,34 @@ int main()
     auto timelimit =std::chrono::minutes{1};
     long counter;
     while(true){
-        counter++;
-        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-        if (now  - starttime >= timelimit) {
-        break;
-        }
         mutex->wlock++;
+        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+        // if (now  - starttime >= timelimit) {
+        // break;
+        // }
+        auto start = std::chrono::high_resolution_clock::now();
             if (mutex->wlock > 1 || mutex->num_of_reads > 0){
-                std::cout<<"WLOCK: " << mutex->wlock<< " NUM_OF_READS: "<< mutex->num_of_reads << std::endl;
-                std::cout<< "WAIT CONDITION"<< std::endl;
+                if (mutex->writewait == mutex->readwait == true){
+                    signal_next(mutex);
+                }
+                mutex->writewait=true;
                 pthread_cond_wait(&mutex->writer_cv, &mutex->lock);
+                mutex->writewait=false;
             }
         pthread_mutex_lock(&mutex->lock);
      
         // Writing data
                                     // Measure write time
         pthread_mutex_unlock(&mutex->lock);
-        auto start = std::chrono::high_resolution_clock::now();
         file.read(mutex->value, fileSize);
-        auto end = std::chrono::high_resolution_clock::now();
         pthread_mutex_lock(&mutex->lock);
         mutex->wlock--;
         signal_next(mutex);
         std::this_thread::sleep_for(std::chrono::milliseconds(14));
         pthread_mutex_unlock(&mutex->lock);
-        double elapsed_time = std::chrono::duration<double, std::micro>(end - start).count();
+        counter++;
+        auto end = std::chrono::high_resolution_clock::now();
+        double elapsed_time = std::chrono::duration<double, std::milli>(end - start).count();
         //     // Unlock
         if (starttime - now + fps <= std::chrono::seconds{0}){
         fps = fps + std::chrono::seconds{1};

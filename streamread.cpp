@@ -32,31 +32,38 @@ int main()
     
     std::chrono::time_point<std::chrono::system_clock> starttime = std::chrono::system_clock::now();
     std::chrono::seconds fps{0};
-    auto timelimit =std::chrono::seconds{10};
+    auto timelimit =std::chrono::seconds{60};
     long counter;
+    fork();
     while(true){
+        if (mutex->wlock > 0){
+            mutex->readwait=true;
+            if (mutex->writewait == mutex->readwait == true){
+                signal_next(mutex);
+                mutex->num_of_reads=0;
+            }
+            else{
+            pthread_cond_wait(&mutex->reader_cv, &mutex->lock);
+            }
+            mutex->readwait=false;
+        }
+        mutex->num_of_reads++;
         std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
         if (now  - starttime >= timelimit) {
             break;
         }
-        counter++;
         
-        while (mutex->wlock > 0){
-            std::cout<<"WLOCK: " << mutex->wlock<< "NUM_OF_READS: "<< mutex->num_of_reads << std::endl;
-            std::cout<< "WAIT CONDITION"<< std::endl;
-            pthread_cond_wait(&mutex->reader_cv, &mutex->lock);
-        }
 
         pthread_mutex_unlock(&mutex->lock);
-        mutex->num_of_reads++;
         auto start = std::chrono::high_resolution_clock::now();
         data = mutex->value;
+        output.write(data, mutex->fileSize);
         auto end = std::chrono::high_resolution_clock::now();
 
         mutex->num_of_reads--;
         signal_next(mutex);
-        std::this_thread::sleep_for(std::chrono::milliseconds(14));
-        double elapsed_time = std::chrono::duration<double, std::micro>(end - start).count();
+        counter++;
+        double elapsed_time = std::chrono::duration<double, std::milli>(end - start).count();
         if (starttime - now + fps <= std::chrono::seconds{0}){
             fps = fps + std::chrono::seconds{1};
             std::cout << "FPS: " << counter/std::chrono::seconds(1).count()<<std::endl;
@@ -69,7 +76,6 @@ int main()
             std::cout << "elapsed_time: " << elapsed_time << "ms" << std::endl;
         }
     }
-    output.write(data, mutex->fileSize);
     output.close();
     
     // Cleanup
