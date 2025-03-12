@@ -8,13 +8,9 @@
 #include <thread>
 #include <chrono>
 #include "signaler.h"
-#define OKTOWRITE "/condwrite"
-#define MESSAGE "/msg"
-const char* SEM_NAME = "/sem_mutex_example";
 int main()
 {
     int des_cond, des_msg, shm_fd;
-    int mode = S_IRWXU | S_IRWXG;
     shm_fd = shm_open("/shm_mutex_example", O_CREAT | O_RDWR, 0777);
     std::ifstream file("./bins/_Z723130.NEF", std::ios::binary | std::ios::ate);
     if (!file) {
@@ -56,45 +52,39 @@ int main()
     auto timelimit =std::chrono::minutes{1};
     long counter;
     while(true){
+        pthread_mutex_lock(&mutex->lock);
         mutex->wlock++;
         std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
         // if (now  - starttime >= timelimit) {
         // break;
         // }
         auto start = std::chrono::high_resolution_clock::now();
-            if (mutex->wlock > 1 || mutex->num_of_reads > 0){
-                if (mutex->writewait == mutex->readwait == true){
-                    signal_next(mutex);
-                }
-                mutex->writewait=true;
-                pthread_cond_wait(&mutex->writer_cv, &mutex->lock);
+            if (mutex->wlock > 1 || mutex->num_of_reads > 0){                                  
+                mutex->writewait=true;                             
+                pthread_lock(mutex, 1);
                 mutex->writewait=false;
             }
-        pthread_mutex_lock(&mutex->lock);
      
-        // Writing data
-                                    // Measure write time
-        pthread_mutex_unlock(&mutex->lock);
         file.read(mutex->value, fileSize);
-        pthread_mutex_lock(&mutex->lock);
         mutex->wlock--;
-        signal_next(mutex);
-        std::this_thread::sleep_for(std::chrono::milliseconds(14));
         pthread_mutex_unlock(&mutex->lock);
-        counter++;
+        signal_next(mutex);
+        // std::this_thread::sleep_for(std::chrono::milliseconds(14));
+        counter++; 
         auto end = std::chrono::high_resolution_clock::now();
         double elapsed_time = std::chrono::duration<double, std::milli>(end - start).count();
         //     // Unlock
         if (starttime - now + fps <= std::chrono::seconds{0}){
-        fps = fps + std::chrono::seconds{1};
-        std::cout << "FPS: " << counter/fps.count()<<std::endl;
+        fps = fps + std::chrono::seconds{1};                                    
+        std::cout << "FPS: " << counter<<std::endl;     
+        counter = 0;            
         std::cout << "[Writer] Wrote value: " << "SIZE= "<<fileSize<< std::endl;
         std::cout << "Write Speed: " << (fileSize / (elapsed_time / 1e6)) / (1024 * 1024* 1024) << " MB/s" << std::endl;
-        std::cout << "elapsed_time: " << elapsed_time << "ms" << std::endl;
+        std::cout << "elapsed_time: " << elapsed_time << "ms" << std::endl;     //AVG delay of 14 ms
         }
-    // Cleanup
     }
     munmap(mutex, sizeof(mutex));
+    shm_unlink("/shm_mutex_example");
     close(shm_fd);
     return 0;
 }

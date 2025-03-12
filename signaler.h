@@ -17,8 +17,8 @@ struct SharedData{
     long fileSize;
     bool writewait;
     bool readwait;
-    int wlock;
-    int num_of_reads;
+    volatile int wlock;
+    volatile int num_of_reads;
     char value[];
 };
 void signal_next(SharedData* mem)
@@ -30,6 +30,23 @@ void signal_next(SharedData* mem)
     else
     {
         pthread_cond_broadcast(&mem->reader_cv);
+    }
+}
+void pthread_lock(SharedData* mem, bool readOrWrite){
+    if (mem->readwait == mem->writewait == true){
+        if (readOrWrite == 0){
+        signal_next(mem);
+        pthread_cond_wait(&mem->reader_cv, &mem->lock);
+        }
+    }
+    else{
+       if (readOrWrite == 0){
+        pthread_cond_wait(&mem->reader_cv, &mem->lock);
+        // std::cout<< "A"<<std::endl;
+        }
+        else{
+            pthread_cond_wait(&mem->writer_cv, &mem->lock);
+        }
     }
 }
 #endif
