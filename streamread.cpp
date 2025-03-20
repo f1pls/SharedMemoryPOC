@@ -43,7 +43,7 @@ int main()
 
         pthread_mutex_unlock(&mutex->lock);
         data = mutex->value;
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100)); //debug timeout to see performance with slow reader
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); //debug timeout to see performance with slow reader
         output.write(data, mutex->fileSize);
         signal_next(mutex);
         mutex->num_of_reads--;

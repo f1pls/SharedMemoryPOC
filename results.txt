@@ -1,0 +1,13 @@
+Worst results of over a minute testing, all conducted with 100 ms delay inside 3 readers and no delay on writer:
+    Writer:
+        FPS: 709
+        [Writer] Wrote value: SIZE= 58598428
+        Write Speed: 4.52897e+07 MB/s
+        elapsed_time: 0.001205ms
+    Reader:
+        FPS: 10
+        [Reader] Read value: II*
+        [Reader] Read size: 58598428
+        PNG file read from shared memory and saved as output.png
+        Read Speed: 544.206 MB/s
+        elapsed_time: 100.282ms
