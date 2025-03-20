@@ -9,5 +9,174 @@ Worst results of over a minute testing, all conducted with 100 ms delay inside 3
         [Reader] Read value: II*
         [Reader] Read size: 58598428
         PNG file read from shared memory and saved as output.png
-        Read Speed: 544.206 MB/s
-        elapsed_time: 100.282ms
+        Read Speed: 542.696 MB/s
+        elapsed_time: 100.561ms
+
+Sample of logs:
+
+                                    Writer: 
+
+FPS: 1239
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.30876e+07 MB/s
+elapsed_time: 0.001028ms
+FPS: 910
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.864e+07 MB/s
+elapsed_time: 0.001122ms
+FPS: 1105
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.27285e+07 MB/s
+elapsed_time: 0.001035ms
+FPS: 1257
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.94778e+07 MB/s
+elapsed_time: 0.001103ms
+FPS: 722
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 3.50958e+07 MB/s
+elapsed_time: 0.001555ms
+FPS: 919
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.14364e+07 MB/s
+elapsed_time: 0.001061ms
+FPS: 815
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.87704e+07 MB/s
+elapsed_time: 0.001119ms
+FPS: 1018
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.44108e+07 MB/s
+elapsed_time: 0.001003ms
+FPS: 986
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.92545e+07 MB/s
+elapsed_time: 0.001108ms
+FPS: 1004
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.98849e+07 MB/s
+elapsed_time: 0.001094ms
+FPS: 892
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.05783e+07 MB/s
+elapsed_time: 0.001079ms
+FPS: 2077
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.04381e+07 MB/s
+elapsed_time: 0.001082ms
+FPS: 1447
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.89893e+07 MB/s
+elapsed_time: 0.001114ms
+FPS: 1505
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.99762e+07 MB/s
+elapsed_time: 0.001092ms
+FPS: 1965
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 5.12432e+07 MB/s
+elapsed_time: 0.001065ms
+FPS: 2340
+[Writer] Wrote value: SIZE= 58598428
+Write Speed: 4.96579e+07 MB/s
+elapsed_time: 0.001099ms
+
+                                    Reader:
+
+elapsed_time: 100.369ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.724 MB/s
+elapsed_time: 100.371ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 542.696 MB/s
+elapsed_time: 100.561ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.462 MB/s
+elapsed_time: 100.419ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 544.004 MB/s
+elapsed_time: 100.319ms
+FPS: 9
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 544.175 MB/s
+elapsed_time: 100.288ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.086 MB/s
+elapsed_time: 100.489ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 542.75 MB/s
+elapsed_time: 100.551ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.027 MB/s
+elapsed_time: 100.5ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 542.943 MB/s
+elapsed_time: 100.515ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.562 MB/s
+elapsed_time: 100.401ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.494 MB/s
+elapsed_time: 100.413ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 544.206 MB/s
+elapsed_time: 100.282ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 544.432 MB/s
+elapsed_time: 100.24ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.442 MB/s
+elapsed_time: 100.423ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 543.221 MB/s
+elapsed_time: 100.464ms
+FPS: 10
+[Reader] Read value: II*
+[Reader] Read size: 58598428
+PNG file read from shared memory and saved as output.png
+Read Speed: 544.719 MB/s
+elapsed_time: 100.188ms
